@@ -1,0 +1,66 @@
+h1. Resque for Node.js
+
+p. "Resque":http://github.com/defunkt/resque is a "redis":http://code.google.com/p/redis/ backed task queue inspired by "delayed job":http://github.com/tobi/delayed_job.  "Node.js":http://nodejs.org is a javascript runtime built on the "v8 engine":http://code.google.com/p/v8/.
+
+h2. Why?
+
+Concurrency is awesome, but it can get out of control.  I'm using node for a web crawler and need to pace units of work (I can't request the entire internet at once, but I also don't need to work in a strictly serial fashion).  Essentially, resque.js allows you to chunk together blocks of concurrent code and work through them serially.  @success()@ and @failure(error)@ callbacks are provided and can be passed in through async code to be called on completion, which frees up the worker to take another job off the queue.  The advantage of building this as drop-in compatible resque workers is that the monitoring interface (resque-web) is already written and it provides a nice queue interface between Rails and node.  You're probably already running resque for Rails; use it for Node, too. 
+
+h2. Additional Dependencies
+
+"Fictorial's Redis client":http://github.com/fictorial/redis-node-client must be available somewhere on the load path before @resque.js@ is required.
+
+h2. Use
+
+h3. sandwich_worker.js
+
+<pre><code>#!/usr/bin/env node
+var resque = require ("resque")
+  , sys = require ("sys")
+
+var tasks =
+  { makeMeASandwich: function (sandwich) {
+      var job = this
+      makeSandwich (sandwich, function (err, result) {
+        if (err) job.fail ({ error: err })
+        else job.succeed () }) }
+
+  , RubyTask: function () {
+      sys.puts ("This task could have been pulled off a shared queue")
+      this.succeed () }
+
+  }
+
+resque.createWorker (process.env ["QUEUE"] || "*", tasks).start ()
+</code></pre>
+
+p. To run the worker, @$ QUEUE=sandwich_factory,something_else node sandwich_worker.js@.  You can also just say @QUEUE=*@ and it will poll all of the queues.  If sent a SIGHUP or SIGINT, the worker will finish the current job and then cleanly quit.
+
+h3. Elsewhere
+
+<pre><code>#!/usr/bin/env node
+var resque = require ("resque")
+resque.enqueue ('sandwich_factory', 'makeMeASandwich',
+  { bread: 'Acme Levain'
+  , cheese: 'Cowgirl Creamery Mt Tam'
+  , greens: ['arugula', 'romain']
+  , mustard: true
+  })
+</code></pre>
+
+This code adds a @makeMeASandwich@ request to the @sandwich_factory@ resque queue.
+
+h3. Namespaces
+
+By default, resque uses the redis namespace of @resque:@.  If you require resque as follows, you can use a different namespace:
+
+<pre><code>var resque = require ("resque").withNamespace ("node-only")
+...</code></pre>
+
+h2. Maturity & Contribution
+
+p. This is fairly immature code, but we'll be using it for a production app, so it will see significant iteration and improvement in the near future. To help out, fork, commit, & push.
+
+h2. Obligatory plug
+
+Thanks to "NewsBasis":http://newsbasis.com/ for making this possible.  We're cooking up some awesome stuff, and we'll be hiring very soon.  Contact me to hear more.
