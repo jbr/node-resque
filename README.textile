@@ -15,7 +15,7 @@ h2. Use
 h3. sandwich_worker.js
 
 <pre><code>#!/usr/bin/env node
-var resque = require ("resque")
+var resque = require ("resque").connect ()
   , sys = require ("sys")
 
 var tasks =
@@ -41,11 +41,11 @@ To run the worker, @$ QUEUE=sandwich_factory,something_else node sandwich_worker
 h3. Elsewhere
 
 <pre><code>#!/usr/bin/env node
-var resque = require ("resque")
+var resque = require ("resque").connect ()
 resque.enqueue ('sandwich_factory', 'makeMeASandwich',
   { bread: 'Acme Levain'
-  , cheese: 'Cowgirl Creamery Mt Tam'
-  , greens: ['arugula', 'romain']
+  , cheese: 'Cowgirl Creamery St Pat'
+  , greens: ['arugula']
   , mustard: true
   })
 </code></pre>
@@ -56,13 +56,28 @@ h3. Namespaces
 
 By default, resque uses the redis namespace of @resque:@.  If you require resque as follows, you can use a different namespace:
 
-<pre><code>var resque = require ("resque").withNamespace ("node-only")
+<pre><code>var resque = require ("resque").connect ({ namespace: "node-only" })
+...</code></pre>
+
+h3. Providing a Redis connection
+
+If you already are connected to redis in your app, you can use that client instead of creating a new one.  To do so:
+
+<pre><code>var redisClient = require ("redis").createClient ()
+  , resque = require ("resque").connect ({ redis: redisClient })
+...</code></pre>
+
+h3. Specifying Redis port & host
+
+If Redis is not running locally or is not bound to the default Redis port & host (localhost:6379), you can provide port and host as follows:
+
+<pre><code>var resque = require ("resque").connect ({ host: 'redis.production.example.com', port: 1337 })
 ...</code></pre>
 
 h2. Maturity & Contribution
 
-p. This is fairly immature code, but we'll be using it for a production app, so it will see significant iteration and improvement in the near future. To help out, fork, commit, & push.
+This is fairly immature code, but we'll be using it for a production app, so it will see significant iteration and improvement in the near future. To help out, fork, commit, push, & request pull.
 
-h2. Obligatory plug
+h2. Thanks
 
 Thanks to "NewsBasis":http://newsbasis.com/ for making this possible.  We're cooking up some awesome stuff, and we'll be hiring very soon.  Contact me to hear more.
