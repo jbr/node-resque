@@ -31,12 +31,16 @@ var tasks =
 
   }
 
-resque.createWorker (process.env ["QUEUE"] || "*", tasks).start ()
+var worker = resque.createWorker (process.env ["QUEUE"] || "*", 'sandwich_worker', tasks).start ()
+
+process.addListener ("SIGQUIT", worker.finish) //finish up the last task and end ()
+process.addListener ("SIGKILL", worker.end)    //clean up and exit without finishing.
+
 </code></pre>
 
 @success()@ and @failure(error)@ callbacks are provided and can be passed in through async code to be called on completion, which frees up the worker to take another job off the queue.
 
-To run the worker, @$ QUEUE=sandwich_factory,something_else node sandwich_worker.js@.  You can also just say @QUEUE=*@ and it will poll all of the queues.  If sent a SIGHUP or SIGINT, the worker will finish the current job and then cleanly quit.
+To run the worker, @$ QUEUE=sandwich_factory,something_else node sandwich_worker.js@.  You can also just say @QUEUE=*@ and it will poll all of the queues.
 
 h3. Elsewhere
 

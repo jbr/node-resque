@@ -12,7 +12,7 @@ resque.connect = function (options) {
       args.unshift (namespace)
       return args.join (":") }
   
-  connection.createWorker = function (queues, callbacks) {
+  connection.createWorker = function (queues, name, callbacks) {
     var worker = new EventEmitter ()
       , callbacks = callbacks || {}
       , poll = function () {
@@ -36,7 +36,7 @@ resque.connect = function (options) {
     else
       worker.queues = (typeof queues === 'string') ? queues.split (",") : queues
 
-    worker.identifier = ['node', process.pid, queues].join (":")
+    worker.identifier = [name || 'node', process.pid, queues].join (":")
 
     sys.puts ("[" + namespace + "] " + worker.identifier)
 
@@ -84,22 +84,19 @@ resque.connect = function (options) {
         }) })
 
     worker.end = function () {
-      poll = function () {
-        redis.srem (key ('workers'), worker.identifier, function () {
-          redis.del (
-            [ key ('worker', worker.identifier)
-            , key ('worker', worker.identifier, ':started')
-            , key ('stat', 'failed', worker.identifier)
-            , key ('stat', 'processed', worker.identifier)
-            ]
-            , function () {
-              sys.puts ("END")
-              process.exit () }) }) } }
+      redis.srem (key ('workers'), worker.identifier, function () {
+        redis.del (
+          [ key ('worker', worker.identifier)
+          , key ('worker', worker.identifier, ':started')
+          , key ('stat', 'failed', worker.identifier)
+          , key ('stat', 'processed', worker.identifier)
+          ]
+          , function () {
+            worker.emit ('end') }) }) }
+
+    worker.finish = function () { poll = worker.end }
 
     worker.start = function () {
-      'SIGINT SIGHUP'.split(" ").forEach (function (event) {
-        process.addListener (event, function () { worker.end () }) })
-
       redis.sadd (key ('workers'), worker.identifier)
       redis.set (key ('worker', worker.identifier, 'started')
         , (new Date ()).toString ())
