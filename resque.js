@@ -4,7 +4,7 @@ var resque = exports
     
 resque.connect = function (options) {
   var options = options || {}
-    , redis = options.redis || require ('redis').createClient (options.port, options.host)
+    , redis = options.redis || require ('redis-client').createClient (options.port, options.host)
     , namespace = options.namespace || 'resque'
     , connection = {redis: redis, namespace: namespace}
     , key = function () {
