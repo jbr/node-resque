@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+var       path = require('path')
+  ,        sys = require('sys')
+  , workerFile = process.env.WORKER
+  , workerName = path.basename(workerFile)
+  ,  queueName = process.env.QUEUE
+  ,   redisUri = process.env.REDIS
+  ,    options = {}
+
+if(!workerFile || workerFile.length == 0) {
+  sys.puts("Specify valid worker file with WORKER.")
+  process.exit()
+}
+
+if(!queueName || queueName.length == 0) {
+  queueName = workerName
+}
+
+if(redisUri && redisUri.length > 0) {
+  var url = require('url').parse(redisUri)
+  if(url.host) options.host = url.host
+  if(url.port) options.port = url.port 
+}
+
+if(process.env.NODE_DEBUG) {
+  var s = "Starting resque.js worker on " + queueName + ' queue, ' +
+    workerFile + '.js'
+  if(options.host || options.port) {
+    s += " (redis://" + redisUri + ")"
+  }
+  sys.puts(s)
+}
+
+var worker = require('../resque').connect(options)
+  .createWorker(queueName, workerName, require(workerFile)).start()
+
+process.addListener("SIGQUIT", worker.finish)
+process.addListener("SIGKILL", worker.end)
