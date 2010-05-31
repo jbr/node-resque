@@ -31,8 +31,8 @@ sandwichWorker.SomeRubyTask = function () {
 
 h3. Gentlemen, start your workers
 
-To start the worker, @WORKER=sandwich_worker.js QUEUE=sandwich_factory bin/node-resque@.
-You can optionally provide a url to redis, like @WORKER=sandwich_worker.js QUEUE=* REDIS=redis.example.com:9876 bin/node-resque@
+To start the worker, @WORKER=sandwich_worker.js QUEUE=sandwich_factory bin/node-resque-worker@.
+You can optionally provide a url to redis, like @WORKER=sandwich_worker.js QUEUE=* REDIS=redis.example.com:9876 bin/node-resque-worker@
 
 To stop the worker gracefully (finishing the last task), send a QUIT signal.
 To stop the worker less gracefully, send a KILL signal.
