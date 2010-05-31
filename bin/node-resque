@@ -32,7 +32,7 @@ if(process.env.NODE_DEBUG) {
   sys.puts(s)
 }
 
-var worker = require('../resque').connect(options)
+var worker = require('../lib/resque').connect(options)
   .createWorker(queueName, workerName, require(workerFile)).start()
 
 process.addListener("SIGQUIT", worker.finish)
