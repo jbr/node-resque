@@ -38,7 +38,7 @@ You can optionally provide a url to redis, like @WORKER=sandwich_worker.js QUEUE
 To stop the worker gracefully (finishing the last task), send a QUIT signal.
 To stop the worker less gracefully, send a KILL signal.
 
-h3. Elsewhere
+h3. Enqueueing tasks
 
 <pre><code>#!/usr/bin/env node
 var resque = require ("resque").connect ()
