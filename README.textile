@@ -6,6 +6,10 @@ h2. Why?
 
 Resque.js allows you to chunk together blocks of concurrent code and work through them serially across multiple worker processes & machines.  The advantage of building this as drop-in compatible resque workers is that the monitoring interface (resque-web) is already written and it provides a nice queue interface between Rails and node.  You're probably already running resque for Rails; use it for Node, too. 
 
+h2. Install
+
+@npm install resque@ or git clone.
+
 h2. Additional Dependencies
 
 "Fictorial's Redis client":http://github.com/fictorial/redis-node-client must be available somewhere on the load path before @resque.js@ is required.
