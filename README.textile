@@ -14,8 +14,7 @@ h2. Use
 
 h3. sandwich_worker.js
 
-<pre><code>#!/usr/bin/env node
-var sandwichWorker = exports
+<pre><code>var sandwichWorker = exports
 
 sandwichWorker.makeMeASandwich = function (sandwich) {
   var job = this
