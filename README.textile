@@ -15,32 +15,28 @@ h2. Use
 h3. sandwich_worker.js
 
 <pre><code>#!/usr/bin/env node
-var resque = require ("resque").connect ()
-  , sys = require ("sys")
+var sandwichWorker = exports
 
-var tasks =
-  { makeMeASandwich: function (sandwich) {
-      var job = this
-      makeSandwich (sandwich, function (err, result) {
-        if (err) job.fail ({ error: err })
-        else job.succeed () }) }
+sandwichWorker.makeMeASandwich = function (sandwich) {
+  var job = this
+  makeSandwich (sandwich, function (err, result) {
+    if (err) job.fail ({ error: err })
+    else job.succeed () }) }
 
-  , RubyTask: function () {
-      sys.puts ("This task could have been pulled off a shared queue")
-      this.succeed () }
-
-  }
-
-var worker = resque.createWorker (process.env ["QUEUE"] || "*", 'sandwich_worker', tasks).start ()
-
-process.addListener ("SIGQUIT", worker.finish) //finish up the last task and end ()
-process.addListener ("SIGKILL", worker.end)    //clean up and exit without finishing.
-
+sandwichWorker.SomeRubyTask = function () {
+    require ('sys').puts ("This task could have been pulled off a shared queue")
+    this.succeed () }
 </code></pre>
 
 @success()@ and @failure(error)@ callbacks are provided and can be passed in through async code to be called on completion, which frees up the worker to take another job off the queue.
 
-To run the worker, @$ QUEUE=sandwich_factory,something_else node sandwich_worker.js@.  You can also just say @QUEUE=*@ and it will poll all of the queues.
+h3. Gentlemen, start your workers
+
+To start the worker, @WORKER=sandwich_worker.js QUEUE=sandwich_factory bin/node-resque@.
+You can optionally provide a url to redis, like @WORKER=sandwich_worker.js QUEUE=* REDIS=redis.example.com:9876 bin/node-resque@
+
+To stop the worker gracefully (finishing the last task), send a QUIT signal.
+To stop the worker less gracefully, send a KILL signal.
 
 h3. Elsewhere
 
@@ -82,6 +78,8 @@ h2. Maturity & Contribution
 
 This is fairly immature code, but we'll be using it for a production app, so it will see significant iteration and improvement in the near future. To help out, fork, commit, push, & request pull.
 
-h2. Thanks
+h2. Contributors
 
-Thanks to "NewsBasis":http://newsbasis.com/ for making this possible.  We're cooking up some awesome stuff, and we'll be hiring very soon.  Contact me to hear more.
+* "NewsBasis":http://newsbasis.com/
+* "technoweenie":http://github.com/technoweenie
+* You?
