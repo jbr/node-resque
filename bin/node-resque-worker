@@ -1,39 +1,42 @@
 #!/usr/bin/env node
 
-var       path = require('path')
-  ,        sys = require('sys')
+var path = require ('path')
+  , sys = require ('sys')
   , workerFile = process.env.WORKER
-  , workerName = path.basename(workerFile)
-  ,  queueName = process.env.QUEUE
-  ,   redisUri = process.env.REDIS
-  ,    options = {}
+  , workerName = workerFile ? path.basename (workerFile) : undefined
+  , queueName = process.env.QUEUE
+  , redisUri = process.env.REDIS
+  , options = {}
+  , worker
 
-if(!workerFile || workerFile.length == 0) {
-  sys.puts("Specify valid worker file with WORKER.")
-  process.exit()
+if ('undefined' === typeof workerFile || 0 === workerFile.length) {
+  sys.puts ("Specify valid worker file with WORKER.")
+  process.exit ()
 }
 
-if(!queueName || queueName.length == 0) {
+if ('undefined' === typeof queueName || 0 === queueName.length)
   queueName = workerName
+
+if (redisUri && 0 !== redisUri.length) {
+  var url = require('url').parse (redisUri)
+  if (url.host) options.host = url.host
+  if (url.port) options.port = url.port 
 }
 
-if(redisUri && redisUri.length > 0) {
-  var url = require('url').parse(redisUri)
-  if(url.host) options.host = url.host
-  if(url.port) options.port = url.port 
-}
+if (process.env.NODE_DEBUG)
+    sys.puts (
+	'Starting resque.js worker on ' + queueName +
+	    ' queue, ' + workerFile + '.js (' +
+	    ((options.host || options.port) ?
+	     "redis://" + redisUri :
+	     "default redis"
+	    ) + ')')
 
-if(process.env.NODE_DEBUG) {
-  var s = "Starting resque.js worker on " + queueName + ' queue, ' +
-    workerFile + '.js'
-  if(options.host || options.port) {
-    s += " (redis://" + redisUri + ")"
-  }
-  sys.puts(s)
-}
+worker = require ('../lib/resque')
+    .connect (options)
+    .createWorker (
+	queueName, workerName, require (workerFile))
+    .start ()
 
-var worker = require('../lib/resque').connect(options)
-  .createWorker(queueName, workerName, require(workerFile)).start()
-
-process.addListener("SIGQUIT", worker.finish)
-process.addListener("SIGKILL", worker.end)
+process.addListener ("SIGQUIT", worker.finish)
+process.addListener ("SIGKILL", worker.end)
