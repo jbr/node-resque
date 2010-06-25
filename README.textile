@@ -24,11 +24,14 @@ sandwichWorker.makeMeASandwich = function (sandwich) {
   var job = this
   makeSandwich (sandwich, function (err, result) {
     if (err) job.fail ({ error: err })
-    else job.succeed () }) }
+    else job.succeed ()
+  })
+}
 
 sandwichWorker.SomeRubyTask = function () {
     require ('sys').puts ("This task could have been pulled off a shared queue")
-    this.succeed () }
+    this.succeed ()
+}
 </code></pre>
 
 @success()@ and @failure(error)@ callbacks are provided and can be passed in through async code to be called on completion, which frees up the worker to take another job off the queue.
