@@ -1,5 +1,5 @@
 { "name": "resque"
-, "version": "0.0.1"
+, "version": "0.0.2"
 , "keywords": [ "redis", "resque", "worker", "queue"]
 , "description": "resque (a redis-backed work queue) for node"
 , "contributors":

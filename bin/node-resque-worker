@@ -7,7 +7,6 @@ var path = require ('path')
   , queueName = process.env.QUEUE
   , redisUri = process.env.REDIS
   , options = {}
-  , worker
 
 if ('undefined' === typeof workerFile || 0 === workerFile.length) {
   sys.puts ("Specify valid worker file with WORKER.")
@@ -32,11 +31,14 @@ if (process.env.NODE_DEBUG)
 	     "default redis"
 	    ) + ')')
 
-worker = require ('../lib/resque')
+var resque = require ('../lib/resque')
     .connect (options)
-    .createWorker (
-	queueName, workerName, require (workerFile))
-    .start ()
+
+resque.cleanStaleWorkers ()
+
+var worker = resque.createWorker (queueName, workerName, require (workerFile))
+
+worker.start ()
 
 process.addListener ("SIGQUIT", worker.finish)
 process.addListener ("SIGKILL", worker.end)

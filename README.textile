@@ -80,6 +80,10 @@ If Redis is not running locally or is not bound to the default Redis port & host
 <pre><code>var resque = require ("resque").connect ({ host: 'redis.production.example.com', port: 1337 })
 ...</code></pre>
 
+h3. Cleaning stale workers
+
+At any point, you can call @require ("resque").connect({...}).cleanStaleWorkers ()@, which will ensure that any dead workers have been removed from resque. This is called at the start of @node-resque-worker@.
+
 h2. Maturity & Contribution
 
 This is fairly immature code, but we'll be using it for a production app, so it will see significant iteration and improvement in the near future. To help out, fork, commit, push, & request pull.
