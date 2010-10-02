@@ -33,6 +33,7 @@ if (process.env.NODE_DEBUG)
 
 var resque = require ('../lib/resque')
     .connect (options)
+var resque = require ('resque').connect (options)
 
 resque.cleanStaleWorkers ()
 

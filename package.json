@@ -1,5 +1,5 @@
 { "name": "resque"
-, "version": "0.0.2"
+, "version": "0.0.3"
 , "keywords": [ "redis", "resque", "worker", "queue"]
 , "description": "resque (a redis-backed work queue) for node"
 , "contributors":
@@ -11,10 +11,7 @@
   , "url": "http://github.com/jbr/node-resque.git"
   }
 , "bugs": { "web": "http://github.com/jbr/node-resque/issues" }
-, "directories":
-  { "lib": "./lib"
-  , "test": "./bin"
-  }
-, "dependencies": { "redis-client": ">= 0.3.4" }
+, "dependencies": { "redis": ">= 0.3.2" }
+, "main": "./lib/resque"
 , "bin": { "node-resque-worker": "./bin/node-resque-worker" }
 }
