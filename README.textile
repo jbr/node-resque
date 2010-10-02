@@ -8,11 +8,7 @@ Resque.js allows you to chunk together blocks of concurrent code and work throug
 
 h2. Install
 
-@npm install resque@ or git clone.
-
-h2. Additional Dependencies
-
-"Fictorial's Redis client":http://github.com/fictorial/redis-node-client must be available somewhere on the load path before @resque.js@ is required.
+@npm install resque@ If you don't already have "node_redis":http://github.com/mranney/node_redis (@redis@ on npm), npm will install it for you.
 
 h2. Use
 
