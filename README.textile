@@ -1,4 +1,8 @@
-h1. Resque for Node.js
+h1. This respository is not under active development
+
+p. Check out Rick Olson's "coffee-resque":https://github.com/technoweenie/coffee-resque which is.
+
+h2. Resque for Node.js
 
 p. "Resque":http://github.com/defunkt/resque is a "redis":http://code.google.com/p/redis/ backed task queue inspired by "delayed job":http://github.com/tobi/delayed_job.  "Node.js":http://nodejs.org is a javascript runtime built on the "v8 engine":http://code.google.com/p/v8/.
 
@@ -80,12 +84,3 @@ h3. Cleaning stale workers
 
 At any point, you can call @require ("resque").connect({...}).cleanStaleWorkers ()@, which will ensure that any dead workers have been removed from resque. This is called at the start of @node-resque-worker@.
 
-h2. Maturity & Contribution
-
-This is fairly immature code, but we'll be using it for a production app, so it will see significant iteration and improvement in the near future. To help out, fork, commit, push, & request pull.
-
-h2. Contributors
-
-* "NewsBasis":http://newsbasis.com/
-* "technoweenie":http://github.com/technoweenie
-* You?
